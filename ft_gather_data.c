@@ -1,0 +1,163 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_gather_data.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/12/26 17:06:06 by malaoui           #+#    #+#             */
+/*   Updated: 2019/12/28 15:43:03 by malaoui          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libcub.h"
+
+void    ft_resolution(char *str)
+{
+    int i;
+
+    i = 0;
+    if (str[i] == 'R')
+    {
+        i++;
+        data.x = atoi(&str[i]);
+        i++;
+        data.y = atoi(&str[i]);
+    }
+}
+
+void    ft_sprite_path(char *str)
+{
+    int i;
+
+    i = 0;
+    if (str[i] == 'S')
+    {
+        i++;
+        data.path.sprite = ft_strdup(str + i);
+    }
+}
+
+void    ft_floor(char *str)
+{
+    int i;
+
+    i = 0;
+    data.floor.r = ft_atoi(str + i);
+    while (ft_isdigit(str[i]))
+        i++;
+    if (str[i] == ',')
+        i++;
+    data.floor.g = ft_atoi(str + i);
+    while (ft_isdigit(str[i]))
+        i++;
+    if (str[i] == ',')
+        i++;
+    data.floor.b = ft_atoi(str + i);
+}
+
+void    ft_ceilling(char *str)
+{
+    int i;
+
+    i = 0;
+    data.ceilling.r = ft_atoi(str + i);
+    while (ft_isdigit(str[i]))
+        i++;
+    if (str[i] == ',')
+        i++;
+    data.ceilling.g = ft_atoi(str + i);
+    while (ft_isdigit(str[i]))
+        i++;
+    if (str[i] == ',')
+        i++;
+    data.ceilling.b = ft_atoi(str + i);
+}
+
+char    *ft_check_map(char *str)
+{
+    int i;
+    int cpt;
+    char *s;
+    int o;
+
+    cpt  = 0;
+    i = 0;
+    o = 0;
+    s = NULL;
+    while (str[i] != '\0')
+    {
+        if (str[i] == ' ')
+            i++;
+        else
+        {    cpt++;
+            i++;
+        }
+    }
+    i = 0;
+    s = (char *)malloc(sizeof(char ) * cpt + 1);
+    while (str[i] != '\0')
+    {
+        if (str[i] == ' ')
+            i++;
+        else
+        {
+            s[o] = str[i];
+            o++;
+            i++;
+        }
+    }
+    s[o] = '\0';
+    return (s);
+}
+
+int   ft_get_map(char *str)
+{
+    data.map[data.index] = ft_check_map(str);
+    data.index++;
+    return (1);
+}
+
+int     ft_analyse(char *str)
+{
+    int i;
+
+    i = 0;
+    if (str[i] == 'R')
+        ft_resolution(str + i);
+    else if (str[i] == 'S')
+        ft_sprite_path(str + i);
+    else if (str[i] == 'F')
+        ft_floor(str + i + 1);
+    else if (str[i] == 'C')
+        ft_ceilling(str + i + 1);
+    else if (ft_memcmp(str, "NO", 2) == 0)
+        data.path.north = ft_substr(str, 3, ft_strlen(str));
+    else if (ft_memcmp(str, "SO", 2) == 0)
+        data.path.sprite = ft_substr(str, 3, ft_strlen(str));
+    else if (ft_memcmp(str, "WE", 2) == 0)
+        data.path.west = ft_substr(str, 3, ft_strlen(str));
+    else if (ft_memcmp(str, "EA", 2) == 0)
+        data.path.east = ft_substr(str, 3, ft_strlen(str));
+    else if (ft_isdigit(str[i]))
+        if (ft_get_map(str) != 1)
+            return (EXIT_FAILURE);   
+    if (data.x == 0 || data.y == 0)
+        return (0);
+    return (1);
+}
+
+int    ft_read_map(char **str)
+{
+    int     fd;
+    char    *line;
+
+    line = NULL;
+    fd = open(str[0], O_RDONLY);
+    while ((get_next_line(fd, &line) == 1))
+        ft_analyse(line);
+    data.cols = ft_strlen(data.map[0]);
+    free(line);
+    data.map[data.index + 1] = NULL;
+    return (1);
+}
