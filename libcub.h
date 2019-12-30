@@ -6,7 +6,7 @@
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 16:31:16 by malaoui           #+#    #+#             */
-/*   Updated: 2019/12/28 15:48:22 by malaoui          ###   ########.fr       */
+/*   Updated: 2019/12/29 22:57:24 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,15 @@ typedef struct s_data
 
     // Key is Pressed
     int key_pressed;
+
+    // MiniMap Scale
+    float scale;
 }               t_data;
 
 t_data data;
 
 // Functions used all along the Execution
 int     ft_read_map(char **str);
+void    ft_wall_casting();
+void    ft_draw_rectangle(int i0, int j0);
 #endif
