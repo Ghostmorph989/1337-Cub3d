@@ -1,16 +1,24 @@
 /* ************************************************************************** */
-/*                                                                            */
+/*                              (                                              */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 16:30:53 by malaoui           #+#    #+#             */
-/*   Updated: 2019/12/30 06:03:34 by malaoui          ###   ########.fr       */
+/*   Updated: 2019/12/30 12:59:24 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libcub.h"
+
+void    pixel_put(float x, float y, int color)
+{
+    if ((x >= 0 && x <= data.x) && (y >= 0 && y <= data.y))
+        mlx_pixel_put(data.mlx_ptr, data.mlx_win, x, y , color);
+    else 
+        return ;
+}
 
 int abs (int n) 
 { 
@@ -18,8 +26,12 @@ int abs (int n)
 } 
   
 //DDA Function for line generation 
-void ft_draw_line(int X0, int Y0, int X1, int Y1) 
-{ 
+void ft_draw_line(float X0, float Y0, float X1, float Y1) 
+{
+    //printf("%f | %f | %f | %f\n", X0, Y0, X1, Y1);
+    int i;
+
+    i = 0;
     // calculate dx & dy 
     int dx = X1 - X0; 
     int dy = Y1 - Y0; 
@@ -34,15 +46,15 @@ void ft_draw_line(int X0, int Y0, int X1, int Y1)
     // Put pixel for each step 
     float X = X0; 
     float Y = Y0; 
-    for (int i = 0; i <= steps; i++) 
+    while (i <= steps) 
     {
         // To remove
-        if (data.map[(int)(Y / data.y_l)][(int)(  X / data.x_l)] == '1')
-            break;
-        mlx_pixel_put(data.mlx_ptr, data.mlx_win, X, Y, RED);  // put pixel at (X,Y) 
+        /*if (data.map[(int)(Y / data.y_l)][(int)(  X / data.x_l)] == '1')
+            break;*/
+        pixel_put(X, Y, RED);  // put pixel at (X,Y) 
         X += Xinc;           // increment in x at each step 
         Y += Yinc;           // increment in y at each step 
-                             // generation step by step 
+        i++;                    // generation step by step 
     } 
 }
 
@@ -50,6 +62,10 @@ void  ft_calcul_lenght(void)
 {
     // data.x_l = data.x/data.cols;
     // data.y_l = data.y/data.index;
+
+    data.wall.x = 64;
+    data.wall.y = 64;
+    // Minimap Scale 
     data.x_l = 10;
     data.y_l = 15;
 }
@@ -63,14 +79,14 @@ void ft_draw_rectangle(int i0, int j0)
     j = 0;
     while (i < data.x_l)
     {
-        mlx_pixel_put(data.mlx_ptr, data.mlx_win, data.x_l*i0 + i, data.y_l*j0, WHITE);
-        mlx_pixel_put(data.mlx_ptr, data.mlx_win, data.x_l*i0 + i, data.y_l*j0 + data.y_l, WHITE);
+        pixel_put(data.x_l*i0 + i, j0*data.y_l, WHITE);
+        pixel_put(data.x_l*i0 + i, j0*data.y_l + data.y_l, WHITE);
         i++;
     }
     while (j < data.y_l)
     {
-        mlx_pixel_put(data.mlx_ptr, data.mlx_win, data.x_l*i0, data.y_l*j0 + j, WHITE);
-        mlx_pixel_put(data.mlx_ptr, data.mlx_win, data.x_l*i0 + data.x_l, data.y_l*j0 + j, WHITE);
+        pixel_put(data.x_l*i0, data.y_l*j0 + j, WHITE);
+        pixel_put(data.x_l*i0 + data.x_l, data.y_l*j0 + j, WHITE);
         j++;
     }
 }
@@ -79,18 +95,22 @@ void    ft_draw_player(void)
 {
     float i;
     float j;
+    float col;
 
-    j = -33;
+
+    col = 0;
+    j = data.dir.angle - (data.dir.fov)/2;
     i = data.dir.fov/data.x;
-    // mlx_pixel_put(data.mlx_ptr, data.mlx_win, data.player_x * data.x_l, data.player_y * data.y_l, 5911220);
-    while (j <= 33)
+    while (col <= data.x)
     {
-        data.dir.x = cos((data.dir.angle + j)*M_PI/180);
-        data.dir.y = sin((data.dir.angle + j)*M_PI/180);
-        ft_draw_line(data.player_x*data.x_l, data.player_y*data.y_l, data.player_x*data.x_l + data.dir.x*1500, data.player_y*data.y_l + data.dir.y*1500);
+        data.dir.x = cos(j*M_PI/180);
+        data.dir.y = sin(j*M_PI/180);
+        data.ray.dist = ft_get_distance(data.player_x*data.x_l, data.player_y*data.y_l, data.player_x*data.x_l + data.dir.x*10000 , data.player_y + data.dir.y*10000);;
+        ft_draw_line(data.player_x*data.x_l, data.player_y*data.y_l, data.player_x*data.x_l + data.dir.x*data.ray.dist, data.player_y*data.y_l + data.dir.y*data.ray.dist);
+        ft_wall_casting(col);
+        printf("col ;%f | j :%f \n", col, j);
+        col++;
         j += i;
-       // printf("%.2f\n", j);
-        // i--;
     }
 }
 
@@ -161,14 +181,14 @@ int   ft_keys(int key, void *ptr)
         newPlayerPosition.y -= movement.y;
         newPlayerPosition.x -= movement.x;
     }
-    if (key == KEY_UP )
+    if (key == KEY_UP)
     {
         newPlayerPosition.y += movement.y;
         newPlayerPosition.x += movement.x;
     }
     if (key == KEY_LEFT)
         data.dir.angle -= 5;
-    if (key == KEY_RIGHT )
+    if (key == KEY_RIGHT)
         data.dir.angle += 5;
     if (!isWall(newPlayerPosition))
     {
@@ -178,14 +198,23 @@ int   ft_keys(int key, void *ptr)
     return (1);
 }
 
+int ft_mouse(int button,int x,int y,void *param)
+{
+    if (x > 0 && x < data.x/2)
+        data.dir.angle += 5;
+     else
+        data.dir.angle -= 5;
+    return (1);
+}
+
 int     ft_manage(void)
 {
     int i;
 
     i = 0;
-    mlx_key_hook (data.mlx_win, ft_keys, "hi");
     mlx_clear_window(data.mlx_ptr, data.mlx_win);
-    //ft_wall_casting();
+    mlx_key_hook (data.mlx_win, ft_keys, "hi");
+   // ft_wall_casting();
     ft_draw_player();
 	ft_draw_map();
     return (0);
@@ -210,6 +239,7 @@ int     main(int argc, char **argv)
        return (EXIT_FAILURE);
     data.mlx_win = mlx_new_window(data.mlx_ptr, data.x, data.y, "The Manhattan Project");
     mlx_loop_hook(data.mlx_ptr, ft_manage, "hi");
+    mlx_mouse_hook(data.mlx_win, ft_mouse, "mouse");
     mlx_loop(data.mlx_ptr);
     free(&data);
     return (EXIT_END);
