@@ -6,7 +6,7 @@
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 16:31:16 by malaoui           #+#    #+#             */
-/*   Updated: 2019/12/31 14:40:11 by malaoui          ###   ########.fr       */
+/*   Updated: 2020/01/06 15:47:48 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include "ft_printf/libft/libft.h"
 #include "get_next_line/get_next_line.h"
 #include <fcntl.h>
+#include <limits.h>
 
 // Marcos 
 # define EXIT_SUCCES 1
@@ -122,9 +123,6 @@ typedef struct s_data
     // Direction
     t_direction dir;
 
-    // Key is Pressed
-    int key_pressed;
-
     // MiniMap Scale
     float scale;
 
@@ -135,19 +133,25 @@ typedef struct s_data
     t_wall wall;
 
     float ff;
+
+    // Key Pressed
+    int key_on;
 }               t_data;
 
 t_data data;
 
 // Functions used all along the Execution
 
-int     ft_read_map(char **str);
-void    ft_wall_casting(float col);
-void    ft_draw_rectangle(int i0, int j0);
-int     isWall(t_direction position);
-int     ft_intersection(float rayangle);
-void ft_draw_line(float X0, float Y0, float X1, float Y1);
-void    pixel_put(float x, float y, int color);
-float  ft_get_distance(int X0, int Y0, int X1, int Y1) ;
+int      ft_read_map(char **str);
+void     ft_wall_casting(float col, float angle);
+void     ft_draw_rectangle(int i0, int j0);
+int      isWall(t_direction position);
+int      ft_intersection(float rayangle);
+void     ft_draw_line(float X0, float Y0, float X1, float Y1);
+void     pixel_put(float x, float y, int color);
+void     ft_get_distance();
+void     ft_h_intersection(float ray_angle);
+void     RayFacing(float j);
+void     ft_v_intersection(float ray_angle);
 
 #endif

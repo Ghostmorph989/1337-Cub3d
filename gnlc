@@ -1,0 +1,16 @@
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
+
+# define BUFFER_SIZE 10
+int     main(void)
+{
+    int fd;
+    int i;
+    char str[1000];
+    if(read(1, str, BUFFER_SIZE))
+    {
+        printf("str : %s\n", str);
+    }
+    return (0);
+}

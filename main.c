@@ -24,50 +24,46 @@ int abs (int n)
 { 
     return ( (n>0) ? n : ( n * (-1))); 
 } 
-  
-//DDA Function for line generation 
+
 void ft_draw_line(float X0, float Y0, float X1, float Y1) 
 {
-    //printf("%f | %f | %f | %f\n", X0, Y0, X1, Y1);
     int i;
+    int dx;
+    int dy;
+    int steps;
+    float Xinc;
+    float Yinc;
+    float X; 
+    float Y;
 
     i = 0;
-    // calculate dx & dy 
-    int dx = X1 - X0; 
-    int dy = Y1 - Y0; 
-  
-    // calculate steps required for generating pixels 
-    int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy); 
-  
-    // calculate increment in x & y for each steps 
-    float Xinc = dx / (float) steps; 
-    float Yinc = dy / (float) steps; 
-  
-    // Put pixel for each step 
-    float X = X0; 
-    float Y = Y0; 
+    dx = X1 - X0; 
+    dy = Y1 - Y0; 
+    steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy); 
+    Xinc = dx / (float) steps; 
+    Yinc = dy / (float) steps; 
+    X = X0; 
+    Y = Y0; 
     while (i <= steps) 
     {
-        // To remove
-        /*if (data.map[(int)(Y / data.y_l)][(int)(  X / data.x_l)] == '1')
-            break;*/
-        pixel_put(X, Y, RED);  // put pixel at (X,Y) 
-        X += Xinc;           // increment in x at each step 
-        Y += Yinc;           // increment in y at each step 
-        i++;                    // generation step by step 
+        pixel_put(X, Y, RED);
+        X += Xinc;
+        Y += Yinc;
+        i++;
     } 
 }
 
 void  ft_calcul_lenght(void)
 {
-    // data.x_l = data.x/data.cols;
-    // data.y_l = data.y/data.index;
+    data.x_l = data.x/data.cols;
+    data.y_l = data.y/data.index;
 
-    data.wall.x = 64;
-    data.wall.y = 64;
-    // Minimap Scale 
-    data.x_l = 10;
-    data.y_l = 15;
+    data.wall.x = 32;
+    data.wall.y = 32;
+    
+    // // Minimap Scale 
+    // data.x_l = 10;
+    // data.y_l = 15;
 }
 
 void ft_draw_rectangle(int i0, int j0)
@@ -101,14 +97,12 @@ void    ft_draw_player(void)
     col = 0;
     j = data.dir.angle - (data.dir.fov)/2;
     i = data.dir.fov/data.x;
-    while (col <= data.x)
+    while (col < data.x)
     {
         data.dir.x = cos(j*M_PI/180);
         data.dir.y = sin(j*M_PI/180);
-        data.ray.dist = ft_get_distance(data.player_x*data.x_l, data.player_y*data.y_l, data.player_x*data.x_l + data.dir.x*10000 , data.player_y + data.dir.y*10000);;
-        ft_draw_line(data.player_x*data.x_l, data.player_y*data.y_l, data.player_x*data.x_l + data.dir.x*data.ray.dist, data.player_y*data.y_l + data.dir.y*data.ray.dist);
-        ft_wall_casting(col);
-        printf("col ;%f | j :%f \n", col, j);
+        ft_v_intersection(j*M_PI/180);
+        //ft_wall_casting(col, j);
         col++;
         j += i;
     }
@@ -130,7 +124,7 @@ void ft_draw_map(void)
                 ft_draw_rectangle(j , i);
             else if (data.map[i][j] == 'N' || data.map[i][j] == 'W' || data.map[i][j] == 'E' || data.map[i][j] == 'S')
             {
-                if (data.key_pressed == 0)
+                if (!data.key_on)
                 {
                 if (data.map[i][j] == 'N')
                     data.dir.angle = 90;
@@ -140,8 +134,8 @@ void ft_draw_map(void)
                     data.dir.angle = 180;
                 if (data.map[i][j] == 'S')
                     data.dir.angle = 270;
-                    data.player_x = j;
-                 data.player_y = i;
+                data.player_x = j;
+                data.player_y = i;
                 }
             }
             j++;
@@ -152,7 +146,8 @@ void ft_draw_map(void)
 
 int     isWall(t_direction position)
 {
-    if (data.map[(int)position.y][(int)position.x] == '1')
+    //printf("%c , y : %d |x : %d\n", data.map[(int)round(position.y/data.y_l)][(int)round(position.x/data.x_l)], (int)round(position.y/data.y_l), (int)round(position.x/data.x_l));
+    if (data.map[(int)round(position.y/data.y_l)][(int)round(position.x/data.x_l)] == '1')
         return (1);
     return (0);   
 }
@@ -168,10 +163,11 @@ t_direction ft_vector_from_angle(double angle, double size)
 
 int   ft_keys(int key, void *ptr)
 {
+    ptr = NULL;
     t_direction newPlayerPosition;
-    t_direction movement = ft_vector_from_angle(data.dir.angle, 0.6);
+    t_direction movement = ft_vector_from_angle(data.dir.angle, 0.2);
 
-    data.key_pressed = 1;
+    data.key_on = 1;
     newPlayerPosition.x = data.player_x;
     newPlayerPosition.y = data.player_y;
     if (key == EXIT_KEY)
@@ -200,11 +196,25 @@ int   ft_keys(int key, void *ptr)
 
 int ft_mouse(int button,int x,int y,void *param)
 {
-    if (x > 0 && x < data.x/2)
+    y = 0;
+    button = 1;
+    param = NULL;
+    if (x >= 0 && x < data.x/2)
         data.dir.angle += 5;
      else
         data.dir.angle -= 5;
     return (1);
+}
+
+int     ft_mouse_pressed(int keycode, void *param)
+{
+    ft_keys(keycode, param);
+    return (1);
+}
+
+int     ft_exit(int keycode , void* param)
+{
+    exit(1);
 }
 
 int     ft_manage(void)
@@ -213,12 +223,14 @@ int     ft_manage(void)
 
     i = 0;
     mlx_clear_window(data.mlx_ptr, data.mlx_win);
-    mlx_key_hook (data.mlx_win, ft_keys, "hi");
-   // ft_wall_casting();
+    mlx_hook(data.mlx_win, 2, 1L<<0, ft_mouse_pressed, "hi");
+    mlx_hook(data.mlx_win, 17, 1L<<5, ft_exit, "hi");
+    mlx_mouse_hook(data.mlx_win, ft_mouse, "mouse");
+    ft_draw_map();
     ft_draw_player();
-	ft_draw_map();
     return (0);
 }
+
 
 int     main(int argc, char **argv)
 {
@@ -227,10 +239,10 @@ int     main(int argc, char **argv)
     i = 0;
     data.index = 0;
     data.dir.fov = 66;
-    data.key_pressed = 0;
     data.scale = 0.2;
-    data.map = (char **)malloc(sizeof(char *) * 100);
-    if (ft_read_map(&argv[1]) == 0)
+    data.map = (char **)malloc(sizeof(char *) * 15);
+    data.key_on = 0;
+    if (ft_read_map(&argv[argc - 1]) == 0)
         return (EXIT_FAILURE);
     else
         printf("[+] Getting Data From : %s !\n", argv[1]);
@@ -238,8 +250,8 @@ int     main(int argc, char **argv)
     if (!(data.mlx_ptr = mlx_init()))
        return (EXIT_FAILURE);
     data.mlx_win = mlx_new_window(data.mlx_ptr, data.x, data.y, "The Manhattan Project");
+    mlx_key_hook (data.mlx_win, ft_keys, "hi");
     mlx_loop_hook(data.mlx_ptr, ft_manage, "hi");
-    mlx_mouse_hook(data.mlx_win, ft_mouse, "mouse");
     mlx_loop(data.mlx_ptr);
     free(&data);
     return (EXIT_END);
