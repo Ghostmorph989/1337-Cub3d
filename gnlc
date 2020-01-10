@@ -8,7 +8,8 @@ int     main(void)
     int fd;
     int i;
     char str[1000];
-    if(read(1, str, BUFFER_SIZE))
+     int fd = open();
+    if(read(fd, str, BUFFER_SIZE))
     {
         printf("str : %s\n", str);
     }

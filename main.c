@@ -55,15 +55,15 @@ void ft_draw_line(float X0, float Y0, float X1, float Y1)
 
 void  ft_calcul_lenght(void)
 {
-    data.x_l = data.x/data.cols;
-    data.y_l = data.y/data.index;
+    // data.x_l = data.x/data.cols;
+    // data.y_l = data.y/data.index;
 
     data.wall.x = 32;
     data.wall.y = 32;
     
     // // Minimap Scale 
-    // data.x_l = 10;
-    // data.y_l = 15;
+    data.x_l = 32;
+    data.y_l = 32;
 }
 
 void ft_draw_rectangle(int i0, int j0)
@@ -91,20 +91,18 @@ void    ft_draw_player(void)
 {
     float i;
     float j;
-    float col;
+    int col;
 
 
-    col = 0;
+    col = data.x -1 ;
     j = data.dir.angle - (data.dir.fov)/2;
     i = data.dir.fov/data.x;
-    while (col < data.x)
+    while (col <= data.x)
     {
-        data.dir.x = cos(j*M_PI/180);
-        data.dir.y = sin(j*M_PI/180);
-        ft_v_intersection(j*M_PI/180);
+        ft_find_intersection(j*M_PI/180);
         //ft_wall_casting(col, j);
-        col++;
         j += i;
+        col++;
     }
 }
 
@@ -134,8 +132,8 @@ void ft_draw_map(void)
                     data.dir.angle = 180;
                 if (data.map[i][j] == 'S')
                     data.dir.angle = 270;
-                data.player_x = j;
-                data.player_y = i;
+                    data.player_x = j;
+                    data.player_y = i;
                 }
             }
             j++;
@@ -146,10 +144,11 @@ void ft_draw_map(void)
 
 int     isWall(t_direction position)
 {
-    //printf("%c , y : %d |x : %d\n", data.map[(int)round(position.y/data.y_l)][(int)round(position.x/data.x_l)], (int)round(position.y/data.y_l), (int)round(position.x/data.x_l));
-    if (data.map[(int)round(position.y/data.y_l)][(int)round(position.x/data.x_l)] == '1')
-        return (1);
-    return (0);   
+    if (position.x < 0 || position.y < 0 )
+        return 0;
+    if (data.map[(int)(position.y/data.y_l)][(int)(position.x/data.x_l)] == '1')
+        return (0);
+    return (1);   
 }
 
 t_direction ft_vector_from_angle(double angle, double size)
@@ -183,9 +182,9 @@ int   ft_keys(int key, void *ptr)
         newPlayerPosition.x += movement.x;
     }
     if (key == KEY_LEFT)
-        data.dir.angle -= 5;
+        data.dir.angle -= 2;
     if (key == KEY_RIGHT)
-        data.dir.angle += 5;
+        data.dir.angle += 2;
     if (!isWall(newPlayerPosition))
     {
         data.player_x = newPlayerPosition.x;
@@ -238,7 +237,7 @@ int     main(int argc, char **argv)
 
     i = 0;
     data.index = 0;
-    data.dir.fov = 66;
+    data.dir.fov = 60;
     data.scale = 0.2;
     data.map = (char **)malloc(sizeof(char *) * 15);
     data.key_on = 0;

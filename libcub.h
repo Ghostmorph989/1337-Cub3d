@@ -6,7 +6,7 @@
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 16:31:16 by malaoui           #+#    #+#             */
-/*   Updated: 2020/01/06 15:47:48 by malaoui          ###   ########.fr       */
+/*   Updated: 2020/01/10 20:13:37 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,8 +150,7 @@ int      ft_intersection(float rayangle);
 void     ft_draw_line(float X0, float Y0, float X1, float Y1);
 void     pixel_put(float x, float y, int color);
 void     ft_get_distance();
-void     ft_h_intersection(float ray_angle);
-void     RayFacing(float j);
-void     ft_v_intersection(float ray_angle);
+void        ft_find_intersection(float ray_angle);
+void     RayFacing(double *j);
 
 #endif
