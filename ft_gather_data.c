@@ -6,7 +6,7 @@
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 17:06:06 by malaoui           #+#    #+#             */
-/*   Updated: 2019/12/28 15:43:03 by malaoui          ###   ########.fr       */
+/*   Updated: 2020/01/19 14:13:06 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,18 @@ void    ft_floor(char *str)
 
     i = 0;
     data.floor.r = ft_atoi(str + i);
-    while (ft_isdigit(str[i]))
+    printf("%s\n", str);
+    while (ft_isdigit(str[i]) || str[i] == ' ')
         i++;
     if (str[i] == ',')
         i++;
     data.floor.g = ft_atoi(str + i);
-    while (ft_isdigit(str[i]))
+    while (ft_isdigit(str[i]) || str[i] == ' ')
         i++;
     if (str[i] == ',')
         i++;
     data.floor.b = ft_atoi(str + i);
+    data.floor.color = rgb_to_int(data.floor.r, data.floor.g, data.floor.b);
 }
 
 void    ft_ceilling(char *str)
@@ -62,16 +64,17 @@ void    ft_ceilling(char *str)
 
     i = 0;
     data.ceilling.r = ft_atoi(str + i);
-    while (ft_isdigit(str[i]))
+    while (ft_isdigit(str[i]) || str[i] == ' ')
         i++;
     if (str[i] == ',')
         i++;
     data.ceilling.g = ft_atoi(str + i);
-    while (ft_isdigit(str[i]))
+    while (ft_isdigit(str[i]) || str[i] == ' ')
         i++;
     if (str[i] == ',')
         i++;
     data.ceilling.b = ft_atoi(str + i);
+    data.ceilling.color = rgb_to_int(data.ceilling.r, data.ceilling.g, data.ceilling.b);
 }
 
 char    *ft_check_map(char *str)

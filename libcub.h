@@ -6,7 +6,7 @@
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 16:31:16 by malaoui           #+#    #+#             */
-/*   Updated: 2020/01/10 20:13:37 by malaoui          ###   ########.fr       */
+/*   Updated: 2020/01/19 16:30:09 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "ft_printf/libft/libft.h"
+#include "ft_printf/libftprintf.h"
 #include "get_next_line/get_next_line.h"
 #include <fcntl.h>
 #include <limits.h>
@@ -37,14 +38,18 @@
 # define    KEY_UP    126
 # define    WHITE     16777215
 # define    RED       9830400
-
-
+# define    SPEED     0.4
+# define    Ceilling 3381759
+# define    Floor       2697513 
+# define    HELP_KEY 4
 // Struct to Store rgb();
 typedef struct s_color
 {
-    int r;
-    int g;
-    int b; 
+    unsigned  int r;
+    unsigned int g;
+    unsigned int b;
+
+    unsigned int color;
 }             t_color;
 
 // Struct to Store Texture Path's
@@ -95,7 +100,7 @@ typedef struct s_data
     // Mlx Window Pointers
     void    *mlx_ptr;
     void    *mlx_win;
-    
+    void    *mlx_image;
     // Resolution [Width && Height]
     int x;
     int y;
@@ -114,7 +119,7 @@ typedef struct s_data
     t_texture path;
 
     // Map [0 || 1 || 2]  1: Wall 2: objects 
-    char **map;
+    char *map[50];
     int index;
     float cols;
     float x_l;
@@ -131,11 +136,16 @@ typedef struct s_data
 
     // Wall 
     t_wall wall;
-
+    int sky;
     float ff;
-
+    int map_ln;
     // Key Pressed
     int key_on;
+
+    int width;
+    int height;
+
+    int draw_menu;
 }               t_data;
 
 t_data data;
@@ -143,14 +153,16 @@ t_data data;
 // Functions used all along the Execution
 
 int      ft_read_map(char **str);
-void     ft_wall_casting(float col, float angle);
+void     ft_wall_casting(int col, float angle, int wasVert);
 void     ft_draw_rectangle(int i0, int j0);
 int      isWall(t_direction position);
-int      ft_intersection(float rayangle);
-void     ft_draw_line(float X0, float Y0, float X1, float Y1);
+int      ft_intersection(float col, float rayangle);
+void     ft_draw_line(float X0, float Y0, float X1, float Y1, int color);
 void     pixel_put(float x, float y, int color);
 void     ft_get_distance();
-void        ft_find_intersection(float ray_angle);
-void     RayFacing(double *j);
+void     ft_find_intersection(int col, float ray_angle);
+void     RayFacing(float angle);
+void    normalize(float *angle);
+unsigned int rgb_to_int(unsigned int r, unsigned int g, unsigned int b);
 
 #endif
