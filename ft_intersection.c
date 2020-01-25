@@ -6,7 +6,7 @@
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/05 10:45:22 by malaoui           #+#    #+#             */
-/*   Updated: 2020/01/19 16:29:57 by malaoui          ###   ########.fr       */
+/*   Updated: 2020/01/25 05:12:44 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,9 +141,10 @@ void    ft_find_intersection(int col, float angle)
     float WallHitY;
     int wasVert;
 
-    wasVert = (vertHitDistance < horzHitDistance);
+    data.wasVert = (vertHitDistance < horzHitDistance);
     WallHitX = (horzHitDistance < vertHitDistance) ? horzWallHitX : vertWallHitX;
     WallHitY = (horzHitDistance < vertHitDistance) ? horzWallHitY : vertWallHitY;
     data.ray.dist = (horzHitDistance < vertHitDistance) ? horzHitDistance : vertHitDistance;
-    ft_wall_casting(col, angle, wasVert);
+
+    ft_wall_casting(col, angle, data.wasVert);
 }

@@ -6,7 +6,7 @@
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 16:31:16 by malaoui           #+#    #+#             */
-/*   Updated: 2020/01/19 16:30:09 by malaoui          ###   ########.fr       */
+/*   Updated: 2020/01/24 19:10:33 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,15 @@
 # define    KEY_UP    126
 # define    WHITE     16777215
 # define    RED       9830400
-# define    SPEED     0.4
+# define    SPEED     0.3
 # define    Ceilling 3381759
 # define    Floor       2697513 
 # define    HELP_KEY 4
+# define    TILE_SIZE 64
 // Struct to Store rgb();
 typedef struct s_color
 {
-    unsigned  int r;
+    unsigned int r;
     unsigned int g;
     unsigned int b;
 
@@ -60,6 +61,12 @@ typedef struct s_texture
     char *west;
     char *east;
     char *sprite;
+
+    char *sky;
+    void  *sky_xpm;
+    int *sky_data;
+    char *floor;
+    int  *floor_xpm;
 }               t_texture;
 
 // Struct to get Directions
@@ -136,16 +143,20 @@ typedef struct s_data
 
     // Wall 
     t_wall wall;
-    int sky;
-    float ff;
     int map_ln;
     // Key Pressed
     int key_on;
 
-    int width;
-    int height;
+    int     width;
+    int     height;
 
-    int draw_menu;
+    int     draw_menu;
+    void   *img_px;
+    int    *img_id;
+
+    int img_w;
+    int img_h;
+    int wasVert;
 }               t_data;
 
 t_data data;

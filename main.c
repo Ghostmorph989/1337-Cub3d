@@ -61,12 +61,12 @@ void  ft_calcul_lenght(void)
     // data.x_l = data.x/data.cols;
     // data.y_l = data.y/data.index;
 
-    data.wall.x = 64;
-    data.wall.y = 64;
+    data.wall.x = TILE_SIZE;
+    data.wall.y = TILE_SIZE;
     
     // // Minimap Scale 
-    data.x_l = 64;
-    data.y_l = 64;
+    data.x_l = TILE_SIZE;
+    data.y_l = TILE_SIZE;
 }
 
 void ft_draw_rectangle(int i0, int j0)
@@ -107,11 +107,15 @@ void    ft_draw_player(void)
     while (col < data.x)
     {
         normalize(&j);
-        RayFacing(j);
         ft_find_intersection(col , j);
         col++;
         j += i;
     }
+}
+
+void    ft_add_obj(int i, int j)
+{
+    
 }
 
 void ft_draw_map(void)
@@ -144,6 +148,8 @@ void ft_draw_map(void)
                     data.player_y = i;
                 }
             }
+            // else if (data.map[i][j] == '2')
+            //     ft_add_obj(i, j);
             j++;
         }
         i++;
@@ -197,9 +203,9 @@ int   ft_keys(int key, void *ptr)
     if (key == EXIT_KEY)
 		exit(1);
     if (key == KEY_LEFT)
-        data.dir.angle -= 9 * M_PI / 180;
+        data.dir.angle -= 5 * M_PI / 180;
     if (key == KEY_RIGHT)
-        data.dir.angle += 9 * M_PI / 180;
+        data.dir.angle += 5 * M_PI / 180;
 
     if (key == KEY_DOWN)
     {
@@ -242,6 +248,32 @@ int     ft_exit(int keycode , void* param)
     exit(1);
 }
 
+void    ft_image_settings()
+{
+    int     bpp = 0;
+    int     size_line = 0;
+    int     endian = 0;
+
+    data.mlx_image = mlx_new_image(data.mlx_ptr, data.x, data.y);
+    img_data = (int *)mlx_get_data_addr(data.mlx_image, &bpp, &size_line, &endian);
+    
+    /* Wall Tetures */
+    int bits_per_pixel = 0;
+    int size_l = 0;
+    int end = 0;
+
+    data.img_px = mlx_xpm_file_to_image(data.mlx_ptr, "textures/stone.xpm", &data.img_w, &data.img_h);
+    data.img_id = (int *)mlx_get_data_addr(data.img_px, &bits_per_pixel, &size_l, &end);
+    printf("1\n");
+    int w = 0;
+    int h = 0;
+    int bi = 0;
+    int si = 0;
+    int en = 0;
+    data.path.sky_xpm = mlx_xpm_file_to_image(data.mlx_ptr, "textures/sky.xpm", &w, &h);
+    data.path.sky_data = (int *)mlx_get_data_addr(data.path.sky_xpm, &bi, &si, &en);
+}
+
 int     ft_manage_event(void)
 {
     mlx_hook(data.mlx_win, 2, 1L<<0, ft_mouse_pressed, "hi");
@@ -251,13 +283,22 @@ int     ft_manage_event(void)
     ft_draw_map();
     ft_draw_player();
     mlx_put_image_to_window(data.mlx_ptr, data.mlx_win, data.mlx_image, 0, 0);
+    if (data.mlx_image == NULL)
+        data.mlx_image = mlx_new_image(data.mlx_ptr, data.x, data.y);
+    else
+        mlx_destroy_image(data.mlx_ptr, data.mlx_image);
     return (0);
 }
 
 
 int     main(int argc, char **argv)
 {
-    int i;
+    int     i;
+    int     bpp = 0;
+    int     size_line = 0;
+    int     endian = 0;
+    int     w = 0;
+    int     h = 0;
 
     i = 0;
     data.index = 0;
@@ -265,22 +306,18 @@ int     main(int argc, char **argv)
     data.scale = 0.2;
     data.key_on = 0;
     data.draw_menu = 0;
+    data.mlx_image = NULL;
     if (ft_read_map(&argv[argc - 1]) == 0)
         return (EXIT_FAILURE);
     else
         ft_printf("[+] Getting Data From : %s !\n", argv[1]);
     ft_calcul_lenght();
-    data.width = data.map_ln * 64;
-    data.height = ft_strlen(data.map[0]) * 64;
+    data.width = data.map_ln * TILE_SIZE;
+    data.height = ft_strlen(data.map[0]) * TILE_SIZE;
     if (!(data.mlx_ptr = mlx_init()))
        return (EXIT_FAILURE);
     data.mlx_win = mlx_new_window(data.mlx_ptr, data.x, data.y, "The Manhattan Project");
-    data.mlx_image = mlx_new_image(data.mlx_ptr, data.x, data.y);
-    int     bpp;
-    int     size_line;
-    int     endian;
-
-    img_data =  (int*)mlx_get_data_addr(data.mlx_image, &bpp, &size_line, &endian);
+    ft_image_settings();
     mlx_loop_hook(data.mlx_ptr, ft_manage_event, "hi");
     mlx_loop(data.mlx_ptr);
     free(&data);

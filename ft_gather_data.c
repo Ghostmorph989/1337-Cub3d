@@ -6,7 +6,7 @@
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 17:06:06 by malaoui           #+#    #+#             */
-/*   Updated: 2020/01/19 14:13:06 by malaoui          ###   ########.fr       */
+/*   Updated: 2020/01/23 10:28:52 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ void    ft_floor(char *str)
 
     i = 0;
     data.floor.r = ft_atoi(str + i);
-    printf("%s\n", str);
     while (ft_isdigit(str[i]) || str[i] == ' ')
         i++;
     if (str[i] == ',')

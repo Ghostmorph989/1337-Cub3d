@@ -6,11 +6,42 @@
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/29 16:39:07 by malaoui           #+#    #+#             */
-/*   Updated: 2020/01/19 17:09:24 by malaoui          ###   ########.fr       */
+/*   Updated: 2020/01/25 05:59:17 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libcub.h"
+
+
+int        ft_handle_texture(int col, float offset, float start, float end, float wallStripHeight)
+{
+    float texture_y = 0;
+    float step = (float )(data.img_h/wallStripHeight);
+
+    while (start <= end)
+    {
+        pixel_put(col, start, data.img_id[(int)texture_y * data.img_w + (int)offset]);
+        texture_y += (float)step;
+        start++;
+    }
+    //printf("start : %f | texture_x : %f |end : %f \n", start, texture_x, end);
+    return (0);
+}
+
+int        ft_ceilling_texture(int col, float offset, float start, float end, float wallStripHeight)
+{
+    float texture_y = 0;
+    float step = (float )(data.img_h/wallStripHeight);
+
+    while (start <= end)
+    {
+        pixel_put(col, start, data.path.sky_data[(int)texture_y * data.img_w + (int)offset]);
+        texture_y += (float)step;
+        start++;
+    }
+    //printf("start : %f | texture_x : %f |end : %f \n", start, texture_x, end);
+    return (0);
+}
 
 unsigned int rgb_to_int(unsigned int r, unsigned int g, unsigned int b)
 {
@@ -34,27 +65,12 @@ void    ft_wall_casting(int col, float angle, int wasVert)
     distanceProjPlane = (data.x/2) / tan(data.dir.fov/2);
     wallStripHeight = (data.wall.x/raydist) * distanceProjPlane;
 
-    float x;
-    float y;
+    float offset = ((wasVert == 0) ? 
+            fmod(data.player_y/4, TILE_SIZE) : fmod(data.player_x/4, TILE_SIZE));
+    ft_handle_texture(col, offset,  data.y/2 - wallStripHeight/2,  data.y/2 + wallStripHeight/2, wallStripHeight);
 
-    if (!wasVert)
-    {
-        x = fmod((data.player_x * data.wall.x), 64);
-        y = data.player_y * data.wall.y;
-    }
-    else
-    {
-        x = data.player_x * data.wall.x;
-        y = fmod((data.player_y * data.wall.y), 64);
-    }
-    printf("%s\n", data.path.north);
-    int w;
-    int h;
-    //mlx_xpm_to_image (data.mlx_ptr, char **xpm_data, int *width, int *height );
-    mlx_xpm_file_to_image(data.mlx_ptr, data.path.north, &w, &h);
-     ft_draw_line(col , data.y/2 - wallStripHeight/2, col, data.y/2 + wallStripHeight/2, WHITE);
     // CEILLING
-    ft_draw_line(col , 0, col, data.y/2 - wallStripHeight/2, data.ceilling.color);
+    ft_ceilling_texture(col , offset,0, data.y/2 - wallStripHeight/2, wallStripHeight/2);
     // FLOOR
     ft_draw_line(col , data.y/2 + wallStripHeight/2, col, data.y, data.floor.color);
 }
