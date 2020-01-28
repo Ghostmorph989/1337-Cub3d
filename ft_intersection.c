@@ -6,7 +6,7 @@
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/05 10:45:22 by malaoui           #+#    #+#             */
-/*   Updated: 2020/01/25 05:12:44 by malaoui          ###   ########.fr       */
+/*   Updated: 2020/01/28 11:26:14 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,15 +47,15 @@ void    ft_find_intersection(int col, float angle)
 
     RayFacing(angle);
     
-    yintercept = floor(data.player_y) * data.wall.y;
-    yintercept += data.ray.down ? data.wall.y : 0;
+    yintercept = floor(data.player_y) * TILE_SIZE;
+    yintercept += data.ray.down ? TILE_SIZE : 0;
 
-    xintercept = data.player_x*data.wall.x + (yintercept - data.player_y*data.wall.y) / tan(angle);
+    xintercept = data.player_x*TILE_SIZE + (yintercept - data.player_y*TILE_SIZE) / tan(angle);
 
-    ystep = data.wall.y;
+    ystep = TILE_SIZE;
     ystep *= data.ray.up ? -1 : 1;
 
-    xstep = data.wall.x / tan(angle);
+    xstep = TILE_SIZE / tan(angle);
     xstep *= (data.ray.left && xstep > 0) ? -1 : 1;
     xstep *= (data.ray.right && xstep < 0) ? -1 : 1;
 
@@ -66,13 +66,13 @@ void    ft_find_intersection(int col, float angle)
     int  width;
     int  height;
 
-    width = ft_strlen(data.map[0]) * data.wall.x;
-    height = data.map_ln * data.wall.y;
+    width = ft_strlen(data.map[0]) * TILE_SIZE;
+    height = data.map_ln * TILE_SIZE;
 
     if (data.ray.up)
         (nextHorzTouch.y)--;
         
-    while ((nextHorzTouch.x >= 0 && nextHorzTouch.x <= width) && (nextHorzTouch.y >= 0 && nextHorzTouch.y <= height))
+    while ((nextHorzTouch.x >= 0 && nextHorzTouch.x < width) && (nextHorzTouch.y >= 0 && nextHorzTouch.y < height))
     {
         if (isWall(nextHorzTouch))
         {
@@ -98,17 +98,16 @@ void    ft_find_intersection(int col, float angle)
     float vertWallHitY = 0;
     t_direction nextVertTouch;
 
-    RayFacing(angle);
 
-    xintercept = floor(data.player_x) * data.wall.x;
-    xintercept += data.ray.right ? data.wall.x : 0;
+    xintercept = floor(data.player_x) * TILE_SIZE;
+    xintercept += data.ray.right ? TILE_SIZE : 0;
 
-    yintercept = data.player_y*data.wall.y + (xintercept - data.player_x*data.wall.x) * tan(angle);
+    yintercept = data.player_y*TILE_SIZE + (xintercept - data.player_x*TILE_SIZE) * tan(angle);
 
-    xstep = data.wall.x;
+    xstep = TILE_SIZE;
     xstep *= data.ray.left ? -1 : 1;
 
-    ystep = data.wall.y * tan(angle);
+    ystep = TILE_SIZE * tan(angle);
     ystep *= (data.ray.up && ystep > 0) ? -1 : 1;
     ystep *= (data.ray.down && ystep < 0) ? -1 : 1;
 
@@ -119,7 +118,7 @@ void    ft_find_intersection(int col, float angle)
     if (data.ray.left)
         (nextVertTouch.x)--;
         
-    while ((nextVertTouch.x >= 0 && nextVertTouch.x <= width) && (nextVertTouch.y >= 0 && nextVertTouch.y <= height))
+    while ((nextVertTouch.x >= 0 && nextVertTouch.x < width) && (nextVertTouch.y >= 0 && nextVertTouch.y < height))
     {
         if (isWall(nextVertTouch))
         {
@@ -134,8 +133,8 @@ void    ft_find_intersection(int col, float angle)
             nextVertTouch.y += ystep;
         }
     }
-    float horzHitDistance = foundHorzWallHit ? ft_distance_beetwen_points(data.player_x*data.wall.x, data.player_y*data.wall.y, horzWallHitX, horzWallHitY) : INT_MAX;
-    float vertHitDistance = foundVertWallHit ? ft_distance_beetwen_points(data.player_x*data.wall.x, data.player_y*data.wall.y, vertWallHitX, vertWallHitY) : INT_MAX;
+    float horzHitDistance = foundHorzWallHit ? ft_distance_beetwen_points(data.player_x*TILE_SIZE, data.player_y*TILE_SIZE, horzWallHitX, horzWallHitY) : INT_MAX;
+    float vertHitDistance = foundVertWallHit ? ft_distance_beetwen_points(data.player_x*TILE_SIZE, data.player_y*TILE_SIZE, vertWallHitX, vertWallHitY) : INT_MAX;
     
     float WallHitX;
     float WallHitY;
@@ -145,6 +144,7 @@ void    ft_find_intersection(int col, float angle)
     WallHitX = (horzHitDistance < vertHitDistance) ? horzWallHitX : vertWallHitX;
     WallHitY = (horzHitDistance < vertHitDistance) ? horzWallHitY : vertWallHitY;
     data.ray.dist = (horzHitDistance < vertHitDistance) ? horzHitDistance : vertHitDistance;
-
-    ft_wall_casting(col, angle, data.wasVert);
+    ft_wall_casting(col, angle, data.wasVert, WallHitX, WallHitY);
+    ft_draw_map();
+    ft_draw_line(data.player_x * 10, data.player_y * 10, WallHitX * 10 / TILE_SIZE, WallHitY * 10 / TILE_SIZE, RED);
 }

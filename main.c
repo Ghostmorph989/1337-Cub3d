@@ -17,7 +17,7 @@ int    *img_data;
 
 void    pixel_put(float x, float y, int color)
 {
-    if ((x >= 0 && x < data.x) && (y >= 0 && y < data.y))
+    if ((x >= 0 && x <= data.x) && (y >= 0 && y <= data.y))
         img_data[((int)x +  ((int)y) * data.y)] = color;
     else 
         return ;
@@ -103,7 +103,7 @@ void    ft_draw_player(void)
 
     col = 0;
     j = data.dir.angle - (data.dir.fov)/2;
-    i = data.dir.fov/(data.x);
+    i = data.dir.fov/data.x;
     while (col < data.x)
     {
         normalize(&j);
@@ -130,8 +130,8 @@ void ft_draw_map(void)
         j = 0;
         while (data.map[i][j] != '\0')
         {
-            // if (data.map[i][j] == '1' && 0)
-            //     ft_draw_rectangle(j , i);
+            if (data.map[i][j] == '1')
+                ft_draw_rectangle(j , i);
             if (data.map[i][j] == 'N' || data.map[i][j] == 'W' || data.map[i][j] == 'E' || data.map[i][j] == 'S')
             {
                 if (!data.key_on)
@@ -188,7 +188,6 @@ int   ft_keys(int key, void *ptr)
 {
     ptr = NULL;
     t_direction newPlayerPosition;
-    t_direction movement = ft_vector_from_angle(data.dir.angle, SPEED);
 
     data.key_on = 1;
     newPlayerPosition.x = data.player_x;
@@ -206,7 +205,7 @@ int   ft_keys(int key, void *ptr)
         data.dir.angle -= 5 * M_PI / 180;
     if (key == KEY_RIGHT)
         data.dir.angle += 5 * M_PI / 180;
-
+ t_direction movement = ft_vector_from_angle(data.dir.angle, SPEED);
     if (key == KEY_DOWN)
     {
         newPlayerPosition.y -= movement.y;
@@ -230,7 +229,7 @@ int ft_mouse(int button, int x, int y, void *param)
     y = 0;
     button = 1;
     param = NULL;
-    if (x >= 0 && x < data.x/2)
+    if (x > 0 && x < data.x/2)
         data.dir.angle -= 5 * M_PI / 180;
     else
         data.dir.angle += 5 * M_PI / 180;
@@ -262,20 +261,20 @@ void    ft_image_settings()
     int size_l = 0;
     int end = 0;
 
-    data.img_px = mlx_xpm_file_to_image(data.mlx_ptr, "textures/stone.xpm", &data.img_w, &data.img_h);
+    data.img_px = mlx_xpm_file_to_image(data.mlx_ptr, "textures/brick.xpm", &data.img_w, &data.img_h);
     data.img_id = (int *)mlx_get_data_addr(data.img_px, &bits_per_pixel, &size_l, &end);
-    printf("1\n");
     int w = 0;
     int h = 0;
     int bi = 0;
     int si = 0;
     int en = 0;
-    data.path.sky_xpm = mlx_xpm_file_to_image(data.mlx_ptr, "textures/sky.xpm", &w, &h);
+    data.path.sky_xpm = mlx_xpm_file_to_image(data.mlx_ptr, "textures/wood.xpm", &w, &h);
     data.path.sky_data = (int *)mlx_get_data_addr(data.path.sky_xpm, &bi, &si, &en);
 }
 
 int     ft_manage_event(void)
 {
+    ft_image_settings();
     mlx_hook(data.mlx_win, 2, 1L<<0, ft_mouse_pressed, "hi");
     mlx_hook(data.mlx_win, 17, 1L<<5, ft_exit, "hi");
     mlx_mouse_hook(data.mlx_win, ft_mouse, "mouse");
@@ -283,10 +282,7 @@ int     ft_manage_event(void)
     ft_draw_map();
     ft_draw_player();
     mlx_put_image_to_window(data.mlx_ptr, data.mlx_win, data.mlx_image, 0, 0);
-    if (data.mlx_image == NULL)
-        data.mlx_image = mlx_new_image(data.mlx_ptr, data.x, data.y);
-    else
-        mlx_destroy_image(data.mlx_ptr, data.mlx_image);
+    mlx_destroy_image(data.mlx_ptr, data.mlx_image);
     return (0);
 }
 
@@ -302,7 +298,7 @@ int     main(int argc, char **argv)
 
     i = 0;
     data.index = 0;
-    data.dir.fov = 60 * M_PI / 180;
+    data.dir.fov = 66 * M_PI / 180;
     data.scale = 0.2;
     data.key_on = 0;
     data.draw_menu = 0;
@@ -317,7 +313,6 @@ int     main(int argc, char **argv)
     if (!(data.mlx_ptr = mlx_init()))
        return (EXIT_FAILURE);
     data.mlx_win = mlx_new_window(data.mlx_ptr, data.x, data.y, "The Manhattan Project");
-    ft_image_settings();
     mlx_loop_hook(data.mlx_ptr, ft_manage_event, "hi");
     mlx_loop(data.mlx_ptr);
     free(&data);

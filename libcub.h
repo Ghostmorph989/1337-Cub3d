@@ -6,7 +6,7 @@
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 16:31:16 by malaoui           #+#    #+#             */
-/*   Updated: 2020/01/24 19:10:33 by malaoui          ###   ########.fr       */
+/*   Updated: 2020/01/28 18:11:11 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@
 # define    KEY_UP    126
 # define    WHITE     16777215
 # define    RED       9830400
-# define    SPEED     0.3
+# define    SPEED     0.5
 # define    Ceilling 3381759
 # define    Floor       2697513 
 # define    HELP_KEY 4
-# define    TILE_SIZE 64
+# define    TILE_SIZE 32
 // Struct to Store rgb();
 typedef struct s_color
 {
@@ -157,6 +157,7 @@ typedef struct s_data
     int img_w;
     int img_h;
     int wasVert;
+    int bpp;
 }               t_data;
 
 t_data data;
@@ -164,7 +165,7 @@ t_data data;
 // Functions used all along the Execution
 
 int      ft_read_map(char **str);
-void     ft_wall_casting(int col, float angle, int wasVert);
+void     ft_wall_casting(int col, float angle, int wasVert, float wallx, float  wally);
 void     ft_draw_rectangle(int i0, int j0);
 int      isWall(t_direction position);
 int      ft_intersection(float col, float rayangle);
@@ -175,5 +176,5 @@ void     ft_find_intersection(int col, float ray_angle);
 void     RayFacing(float angle);
 void    normalize(float *angle);
 unsigned int rgb_to_int(unsigned int r, unsigned int g, unsigned int b);
-
+void ft_draw_map(void);
 #endif
