@@ -1,12 +1,12 @@
 /* ************************************************************************** */
-/*                              (                                              */
+/*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 16:30:53 by malaoui           #+#    #+#             */
-/*   Updated: 2019/12/30 12:59:24 by malaoui          ###   ########.fr       */
+/*   Updated: 2020/01/31 21:45:10 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,9 +113,8 @@ void    ft_draw_player(void)
     }
 }
 
-void    ft_add_obj(int i, int j)
+void    ft_add_sprites(int i, int j)
 {
-    
 }
 
 void ft_draw_map(void)
@@ -148,8 +147,8 @@ void ft_draw_map(void)
                     data.player_y = i;
                 }
             }
-            // else if (data.map[i][j] == '2')
-            //     ft_add_obj(i, j);
+            else if (data.map[i][j] == '2')
+                ft_add_sprites(i, j);
             j++;
         }
         i++;
@@ -261,7 +260,7 @@ void    ft_image_settings()
     int size_l = 0;
     int end = 0;
 
-    data.img_px = mlx_xpm_file_to_image(data.mlx_ptr, "textures/brick.xpm", &data.img_w, &data.img_h);
+    data.img_px = mlx_xpm_file_to_image(data.mlx_ptr, "textures/wall_4.xpm", &data.img_w, &data.img_h);
     data.img_id = (int *)mlx_get_data_addr(data.img_px, &bits_per_pixel, &size_l, &end);
     int w = 0;
     int h = 0;
@@ -275,10 +274,10 @@ void    ft_image_settings()
 int     ft_manage_event(void)
 {
     ft_image_settings();
-    mlx_hook(data.mlx_win, 2, 1L<<0, ft_mouse_pressed, "hi");
-    mlx_hook(data.mlx_win, 17, 1L<<5, ft_exit, "hi");
     mlx_mouse_hook(data.mlx_win, ft_mouse, "mouse");
+    mlx_hook(data.mlx_win, 2, 1L<<0, ft_mouse_pressed, "hi");
     mlx_key_hook(data.mlx_win, ft_keys, "hi");
+    mlx_hook(data.mlx_win, 17, 1L<<5, ft_exit, "hi");
     ft_draw_map();
     ft_draw_player();
     mlx_put_image_to_window(data.mlx_ptr, data.mlx_win, data.mlx_image, 0, 0);

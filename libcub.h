@@ -6,7 +6,7 @@
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 16:31:16 by malaoui           #+#    #+#             */
-/*   Updated: 2020/01/28 18:11:11 by malaoui          ###   ########.fr       */
+/*   Updated: 2020/01/31 19:06:54 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,22 @@ typedef struct s_wall
     int y;
 }               t_wall;
 
+// Struct For images
+
+typedef struct s_image
+{
+    void    *img;
+    int     *img_xpm;
+
+    int     img_w;
+    int     img_h;
+
+    int     bpp;
+    int     size_line;
+    int     endian;
+}               t_image;
+
+
 // Struct to get Data from *.cub file [MAP_FILE]
 typedef struct s_data
 {
@@ -158,23 +174,26 @@ typedef struct s_data
     int img_h;
     int wasVert;
     int bpp;
+
+    int key;
 }               t_data;
 
 t_data data;
 
 // Functions used all along the Execution
 
-int      ft_read_map(char **str);
-void     ft_wall_casting(int col, float angle, int wasVert, float wallx, float  wally);
-void     ft_draw_rectangle(int i0, int j0);
-int      isWall(t_direction position);
-int      ft_intersection(float col, float rayangle);
-void     ft_draw_line(float X0, float Y0, float X1, float Y1, int color);
-void     pixel_put(float x, float y, int color);
-void     ft_get_distance();
-void     ft_find_intersection(int col, float ray_angle);
-void     RayFacing(float angle);
-void    normalize(float *angle);
-unsigned int rgb_to_int(unsigned int r, unsigned int g, unsigned int b);
-void ft_draw_map(void);
+int             ft_read_map(char **str);
+void            ft_wall_casting(int col, float angle, int wasVert, float wallx, float  wally);
+void            ft_draw_rectangle(int i0, int j0);
+int             isWall(t_direction position);
+int             ft_intersection(float col, float rayangle);
+void            ft_draw_line(float X0, float Y0, float X1, float Y1, int color);
+void            pixel_put(float x, float y, int color);
+void            ft_get_distance();
+void            ft_find_intersection(int col, float ray_angle);
+void            RayFacing(float angle);
+void            normalize(float *angle);
+unsigned int    rgb_to_int(unsigned int r, unsigned int g, unsigned int b);
+void            ft_draw_map(void);
+
 #endif
