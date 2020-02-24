@@ -6,7 +6,7 @@
 /*   By: malaoui <malaoui@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/26 16:30:53 by malaoui           #+#    #+#             */
-/*   Updated: 2020/01/31 21:45:10 by malaoui          ###   ########.fr       */
+/*   Updated: 2020/02/24 21:37:58 by malaoui          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,9 @@ int   ft_keys(int key, void *ptr)
         data.dir.angle -= 5 * M_PI / 180;
     if (key == KEY_RIGHT)
         data.dir.angle += 5 * M_PI / 180;
- t_direction movement = ft_vector_from_angle(data.dir.angle, SPEED);
+    
+    t_direction movement = ft_vector_from_angle(data.dir.angle, SPEED);
+    
     if (key == KEY_DOWN)
     {
         newPlayerPosition.y -= movement.y;
@@ -260,7 +262,7 @@ void    ft_image_settings()
     int size_l = 0;
     int end = 0;
 
-    data.img_px = mlx_xpm_file_to_image(data.mlx_ptr, "textures/wall_4.xpm", &data.img_w, &data.img_h);
+    data.img_px = mlx_xpm_file_to_image(data.mlx_ptr, "textures/bluestone.xpm", &data.img_w, &data.img_h);
     data.img_id = (int *)mlx_get_data_addr(data.img_px, &bits_per_pixel, &size_l, &end);
     int w = 0;
     int h = 0;
